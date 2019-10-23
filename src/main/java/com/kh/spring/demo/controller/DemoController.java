@@ -1,5 +1,7 @@
 package com.kh.spring.demo.controller;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,13 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kh.spring.demo.model.vo.Dev;
+import com.kh.spring.demo.model.vo.Member;
 import com.kh.spring.model.dao.DevService;
+import com.kh.spring.model.dao.MemberService;
 
 @Controller  // annotation 표시
 public class DemoController {
 	
 	@Autowired
 	DevService devService;
+	
+	
 	//DevService devService = new DevServiceImpl(); // 이제 이거 안 씀
 	
 	
@@ -122,7 +128,6 @@ public class DemoController {
 	
 	@RequestMapping("/demo/demo4.do")
 	public String demo4(Dev dev, Model model) {
-		
 		model.addAttribute("dev", dev);
 		return "demo/demoResult";
 	}
@@ -140,6 +145,16 @@ public class DemoController {
 		//return "redirect:/demo/demo2.do"; 
 		return "redirect:/";
 	}
+	
+	@RequestMapping("/demo/selectDevList.do")
+	public String selectDevListPage(Model model) {
+		List <Dev> list = devService.selectDevList();
+		model.addAttribute("list", list);
+		return "demo/devList";
+	}
+	
+	
+	
 	
 	
 }

@@ -1,0 +1,139 @@
+--create user finaltest IDENTIFIED by 1234;
+--grant connect, resource to finaltest;
+drop SEQUENCE seq_stuff_main;
+drop SEQUENCE seq_stuff_sub;
+drop SEQUENCE seq_stuff;
+drop SEQUENCE seq_stuff_order;
+
+drop table stuff_order;
+drop table stuff;
+drop table stuff_subcategory;
+drop table stuff_maincategory;
+
+create SEQUENCE seq_stuff_main start with 1;
+create SEQUENCE seq_stuff_sub start with 1;
+create SEQUENCE seq_stuff start with 1;
+create SEQUENCE seq_stuff_order start with 1;
+
+
+--물품 메인 카테고리-----------------------------------------------
+create table stuff_maincategory (
+        mcNo number primary key,
+        mcName varchar2(100) not null
+);
+
+comment on column stuff_maincategory.mcNo is '메인카테고리 번호';
+comment on column stuff_maincategory.mcName is '메인카테고리 이름';
+
+----------------------------------------------------------------
+
+--물품 서브 카테고리----------------------------------------------
+create table stuff_subcategory (
+      scNo number primary key,
+      scName varchar2(100) not null,
+      mcNo number    
+);
+
+alter table stuff_subcategory add constraint fk_mcNo foreign key (mcNo) REFERENCES stuff_maincategory(mcNo) on delete cascade;
+
+comment on column stuff_subcategory.scNo is '서브카테고리 번호';
+comment on column stuff_subcategory.scName is '서브카테고리 이름';
+comment on column stuff_subcategory.mcNo is '메인카테고리 참조 번호';
+
+----------------------------------------------------------------
+
+--물품 테이블----------------------------------------------------
+create table stuff (
+      stuffNo number primary key,
+      stuffName varchar2(50) not null,
+      price number not null,
+      weight number not null,
+      size1 number not null,
+      size2 number not null,
+      size3 number not null,
+      manufacturingdate date not null,
+      manufacturingcountry varchar2(50) not null,
+      color varchar2(10) not null,
+      material varchar2(50) not null,
+      etc varchar(4000) not null,
+      stuffStatus char(3) default 'N' check(stuffStatus in ('Y','N')) not null,
+      enrollDate date default sysdate,
+      scNo number
+);
+
+comment on column stuff.stuffNo is '물품 번호';
+comment on column stuff.stuffName is '물품 이름';
+comment on column stuff.price is '가격';
+comment on column stuff.weight is '중량';
+comment on column stuff.size1 is '가로';
+comment on column stuff.size2 is '세로';
+comment on column stuff.size3 is '높이';
+comment on column stuff.manufacturingdate is '제조일자';
+comment on column stuff.manufacturingcountry is '제조국';
+comment on column stuff.color is '색상';
+comment on column stuff.etc is '기타설명';
+comment on column stuff.material is '재질';
+comment on column stuff.stuffStatus is '결함유무';
+comment on column stuff.enrollDate is '물품등록날짜';
+comment on column stuff.scNo is '참조 서브카테고리 번호';
+
+alter table stuff add constraint fk_subcategory foreign key (scNo) REFERENCES stuff_subcategory (scNo) on delete cascade;
+----------------------------------------------------------------
+
+--발주 테이블----------------------------------------------------
+
+create table stuff_order (
+      orderNo number primary key,
+      orderName varchar2(100) not null,
+      clientCode varchar2(3) not null,
+      stuffCount number not null,
+      stuffPrice number not null,
+      totalPrice number not null,
+      orderDate date default sysdate     
+);
+
+comment on column stuff_order.orderNo is '발주번호';
+comment on column stuff_order.orderName is '품목이름';
+comment on column stuff_order.clientCode is '거래처 참조 코드';
+comment on column stuff_order.stuffCount is '수량';
+comment on column stuff_order.stuffPrice is '단가';
+comment on column stuff_order.totalPrice is '총 금액';
+comment on column stuff_order.orderDate is '발주날짜';
+
+
+--alter table stuff_order add constraint fk_clientCode foreign key (clientCode) REFERENCES 거래처 테이블 (clientCode) on delete cascade;
+----------------------------------------------------------------
+
+insert into STUFF_MAINCATEGORY values(seq_stuff_main.nextval, '소파');
+insert into STUFF_MAINCATEGORY values(seq_stuff_main.nextval, '의자');
+insert into STUFF_MAINCATEGORY values(seq_stuff_main.nextval, '책상');
+insert into STUFF_MAINCATEGORY values(seq_stuff_main.nextval, '침대');
+insert into STUFF_MAINCATEGORY values(seq_stuff_main.nextval, '주방');
+
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '소파 배드', (select mcno from stuff_maincategory where mcname = '소파'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '패브릭 소파', (select mcno from stuff_maincategory where mcname = '소파'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '교체용 소파', (select mcno from stuff_maincategory where mcname = '소파'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '가죽 소파', (select mcno from stuff_maincategory where mcname = '소파'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '식탁 의자', (select mcno from stuff_maincategory where mcname = '의자'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '사무 의자', (select mcno from stuff_maincategory where mcname = '의자'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '암체어', (select mcno from stuff_maincategory where mcname = '의자'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '카페 의자', (select mcno from stuff_maincategory where mcname = '의자'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '유아용 의자', (select mcno from stuff_maincategory where mcname = '의자'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '컴퓨터 책상', (select mcno from stuff_maincategory where mcname = '책상'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '보조 테이블', (select mcno from stuff_maincategory where mcname = '책상'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '화장대', (select mcno from stuff_maincategory where mcname = '책상'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '어린이 책상', (select mcno from stuff_maincategory where mcname = '책상'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '싱글 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '더블 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '2층 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '간이 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '수납형 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '어린이 침대', (select mcno from stuff_maincategory where mcname = '침대'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '식탁', (select mcno from stuff_maincategory where mcname = '주방'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '수납장', (select mcno from stuff_maincategory where mcname = '주방'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '수납선반', (select mcno from stuff_maincategory where mcname = '주방'));
+insert into STUFF_SUBCATEGORY values (seq_stuff_sub.nextval, '사다리', (select mcno from stuff_maincategory where mcname = '주방'));
+
+----------------------------------------------------------------
+
+commit;

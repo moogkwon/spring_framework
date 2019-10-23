@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<!-- aspect 객체 bean으로 등록하기 -->
+	<!-- <bean id="loggerAspect" class = "com.kh.spring.common.aop.LoggerAspect"/>
+	<aop:config>
+		<aop:aspect ref="loggerAspect">
+			<aop:pointcut expression="execution(* com.kh.spring.memo.dao..*(..))" id="loggerTest"/>
+			<aop:around method="loggerAdvice" pointcut-ref ="loggerTest"/>
+			<aop:around method="before" pointcut-ref ="loggerTest"/>
+		</aop:aspect>
+	</aop:config> -->
+	
+	<!-- 어노테이션 방식 aop 적용하기 -->
+	<aop:aspectj-autoproxy/>
+
+
+</beans>
