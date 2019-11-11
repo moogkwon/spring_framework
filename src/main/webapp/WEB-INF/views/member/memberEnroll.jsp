@@ -28,6 +28,7 @@
 				 	$(function(){
 				 		$("#userId_").keyup(function(){
 				 			var userId=$(this).val().trim();
+				 			//console.log("mooog : "+userId);
 				 			if(userId.length<4){
 				 				$(".guide").hide();
 				 				return;
@@ -36,10 +37,10 @@
 				 				url: "${path}/member/checkId.do",
 				 				data:{"userId":userId},
 				 				success: function(data){
-				 					console.log(data);
+				 					console.log("wow : "+data);
 				 					var d=JSON.parse(data);
-				 					console.log(typeof d);
-				 					console.log(d["userId"]);
+				 					//console.log(typeof d);
+				 					//console.log(d["userId"]);
 				 					if(data=='null'){
 				 					 //if(data.isUsable=='true'){
 				 						$("span.ok").show();

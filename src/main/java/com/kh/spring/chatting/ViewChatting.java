@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
@@ -20,6 +21,12 @@ public class ViewChatting extends BinaryWebSocketHandler{
 	
 	private static Map<String,WebSocketSession> clients = new HashMap();
 
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		// TODO Auto-generated method stub
+		sessionChecking();
+		adminBroadCast();
+	}
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) { // 얘가 onmessage 라고 생각해라
 		// client 가 보낸 데이터를 JSON 데이터를 파싱처리하기 위해 JACKSON 를 사용

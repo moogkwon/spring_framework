@@ -17,8 +17,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.spring.board.service.BoardService;
 import com.kh.spring.common.Log4JTest;
+import com.kh.spring.common.encrypt.MyEncrypt;
 import com.kh.spring.demo.model.vo.Member;
 import com.kh.spring.model.dao.MemberService;
+
 @SessionAttributes(value= {"loginMember"})
 @Controller  // annotation 표시
 public class MemberController {
@@ -28,10 +30,13 @@ public class MemberController {
 	MemberService memberService;
 	
 	@Autowired
+	BoardService bService;
+	
+	@Autowired
 	BCryptPasswordEncoder pwEncoder;
 	
 	@Autowired
-	BoardService bService;
+	MyEncrypt enc;
 	
 	
 	@RequestMapping("/member/memberLogin.do")
@@ -132,7 +137,8 @@ public class MemberController {
 		ObjectMapper mapper = new ObjectMapper(); // json 객체를 자동으로 연결 java 와
 		//List<Map<String, String>> list = bService.selectBoardList(1,5);
 		//mapper.readValue(json값, vo클래스);
-		return mapper.writeValueAsString(m);		
+		return mapper.writeValueAsString(m);	
+		
 	}
 	
 	
@@ -148,6 +154,16 @@ public class MemberController {
 	public String signUp(Model model, Member m, HttpSession session) {
 		
 		m.setPassword(pwEncoder.encode(m.getPassword()));
+		
+		// encryption
+		try {
+			m.setEmail(enc.encrypt(m.getEmail()));
+			m.setAddress(enc.encrypt(m.getAddress()));
+			m.setPhone(enc.encrypt(m.getPhone()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 		int result = memberService.memberSignUp(m);
 		
@@ -177,4 +193,23 @@ public class MemberController {
 		return "redirect:/";
 	}
 	
+	
+	@RequestMapping("/member/memberView.do")
+	public String memberView(Member m, Model model) {
+		Member result = memberService.loginMember(m);
+		
+		// decryption
+		try {
+			result.setEmail(enc.decrypt(result.getEmail()));
+			result.setPhone(enc.decrypt(result.getPhone()));
+			result.setAddress(enc.decrypt(result.getAddress()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("member", result);
+		
+		return "member/memberView";
+	}
+		
 }

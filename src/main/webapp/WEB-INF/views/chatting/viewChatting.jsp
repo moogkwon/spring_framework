@@ -85,7 +85,7 @@
 			$("#open_call_state").show();
 		}
 		//메세지를 주고받게 해주는 서버등록(websocket)
-		signaling_server=new WebSocket("wss://192.168.120.216:8443/spring/viewChatting");
+		signaling_server=new WebSocket("wss://192.168.240.172:8443/spring/viewChatting");
 		
 		//시그널링 서버설정  *onmessage함수를 등록
 		signaling_server.onopen=function(){

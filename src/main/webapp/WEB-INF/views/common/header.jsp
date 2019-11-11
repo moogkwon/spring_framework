@@ -51,12 +51,11 @@
 			    </ul>
 			    <script>
 			    	function chatting(){
-			    		open("${pageContext.request.contextPath}/viewChatting.do","_blank","width:100 height:100")
+			    		open("${pageContext.request.contextPath}/viewChatting.do","_blank","width=600 height=400")
 			    	}
 			    </script>
 			    
 			    <c:if test="${empty loginMember  }">
-			    
 			    
 			    <button class="btn btn-outline-success my-2 my-sm-0" type="button" data-toggle="modal" data-target="#loginModal">로그인</button>
 					&nbsp;
@@ -66,6 +65,9 @@
 				<c:if test="${not empty loginMember }">
 				
 				  <span><a href="#">${loginMember.userName}</a> 님, 안녕하세요</span>
+				  &nbsp;
+			                       <button class="btn btn-outline-success my-2 my-sm-0" type="button" 
+                 onclick="location.href='${pageContext.request.contextPath }/member/memberView.do?userId=${loginMember.userId }'">마이페이지</button>
 			      &nbsp;
 			      <button class="btn btn-outline-success my-2 my-sm-0" type="button" 
 			      onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'">로그아웃</button>
